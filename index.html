@@ -19,9 +19,9 @@
             font-family: 'Poppins', sans-serif;
             overflow: hidden; /* Hide scrollbars */
             perspective: 1500px; /* Increased perspective for 3D effect */
-            background: linear-gradient(45deg, #fbcfe8, #d8b4fe, #a5b4fc, #93c5fd);
+            background: linear-gradient(45deg, #4c1d95, #be185d, #a5b4fc, #1e40af);
             background-size: 400% 400%;
-            animation: animateGradient 15s ease infinite;
+            animation: animateGradient 20s ease infinite;
         }
         h1, h2 {
             font-family: 'Pacifico', cursive;
@@ -87,16 +87,9 @@
             100% { transform: translateX(100%) translateY(25%) rotate(30deg); }
         }
         
-        /* --- NEW: Rising Hearts Animation --- */
         @keyframes rise-and-fade {
-            0% {
-                transform: translateY(0) scale(1);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-100vh) scale(0.5);
-                opacity: 0;
-            }
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-100vh) scale(0.5); opacity: 0; }
         }
         
         .heart {
@@ -108,18 +101,11 @@
         }
 
         @keyframes confetti-burst {
-            0% {
-                transform: translate(0, 0) rotate(0deg) scale(0);
-                opacity: 1;
-            }
-            100% {
-                transform: translate(var(--x-end), var(--y-end)) rotate(720deg) scale(1);
-                opacity: 0;
-            }
+            0% { transform: translate(0, 0) rotate(0deg) scale(0); opacity: 1; }
+            100% { transform: translate(var(--x-end), var(--y-end)) rotate(720deg) scale(1); opacity: 0; }
         }
 
         /* --- Main Content & Card Flip Animation --- */
-        /* NEW: Mouse-move interaction styles */
         #card-wrapper {
             transition: transform 0.1s ease-out;
         }
@@ -146,18 +132,23 @@
             transform: rotateY(180deg);
         }
         
+        /* NEW: Gift-wrap themed card back */
         .card-back {
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-direction: column;
-            gap: 1rem;
-            font-size: 1.5rem;
             color: #be185d;
+            overflow: hidden; /* To contain ribbon */
         }
+        .ribbon {
+            position: absolute;
+            background-color: rgba(255,255,255,0.5);
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+        .ribbon.vertical { width: 40px; height: 100%; }
+        .ribbon.horizontal { width: 100%; height: 40px; }
 
 
-        /* Confetti piece styling */
         .confetti-burst-particle {
             position: fixed;
             left: 50%;
@@ -179,6 +170,15 @@
             100% { opacity: 1; transform: translateY(0); }
         }
         
+        /* NEW: Pulsing text glow animation */
+        .text-glow {
+            animation: text-glow 2.5s infinite ease-in-out;
+        }
+        @keyframes text-glow {
+            0%, 100% { text-shadow: 0 0 8px rgba(236, 72, 153, 0.6), 0 0 10px rgba(236, 72, 153, 0.6); }
+            50% { text-shadow: 0 0 16px rgba(236, 72, 153, 1), 0 0 20px rgba(236, 72, 153, 1); }
+        }
+        
         .content-p {
             opacity: 0;
             animation: fadeInP 1s ease-out forwards;
@@ -190,7 +190,7 @@
         }
         
         .sparkle {
-            position: fixed; /* Changed to fixed to appear everywhere */
+            position: fixed;
             width: 12px;
             height: 12px;
             background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0 L61.2 38.8 L100 50 L61.2 61.2 L50 100 L38.8 61.2 L0 50 L38.8 38.8 Z' fill='%23FBBF24'/%3E%3C/svg%3E");
@@ -206,18 +206,39 @@
             50% { transform: scale(1.5) rotate(180deg); opacity: 1; }
             100% { transform: scale(0) rotate(360deg); opacity: 0; }
         }
+        
+        /* NEW: Shooting star animation */
+        .shooting-star {
+            position: fixed;
+            z-index: 1;
+            width: 3px;
+            height: 3px;
+            background: white;
+            border-radius: 50%;
+            filter: drop-shadow(0 0 6px white);
+            animation: shoot linear forwards;
+        }
+        .shooting-star::before {
+            content: '';
+            position: absolute;
+            top: 1px;
+            right: 2px;
+            width: 150px;
+            height: 1px;
+            background: linear-gradient(90deg, white, transparent);
+            transform-origin: right;
+        }
+        @keyframes shoot {
+            0% { transform: translate(var(--x-start), var(--y-start)) rotate(var(--angle)); opacity: 1; }
+            100% { transform: translate(var(--x-end), var(--y-end)) rotate(var(--angle)); opacity: 0; }
+        }
     </style>
 </head>
 <body>
 
     <div id="loader">
         <svg class="cake" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-            <path fill="#F472B6" d="M30,120 C30,100 170,100 170,120 L170,180 L30,180 Z" />
-            <path fill="#FBCFE8" d="M30,140 C30,130 170,130 170,140 L170,160 L30,160 Z" />
-            <path fill="#F9A8D4" d="M20,180 L180,180 L180,190 C180,200 170,200 100,200 C30,200 20,200 20,190 Z" />
-            <path fill="#FDE047" d="M95,80 L105,80 L105,120 L95,120 Z" />
-            <path fill="#F59E0B" d="M98,60 C98,50 102,50 102,60 C105,70 95,70 98,60 Z" />
-            <circle cx="50" cy="150" r="8" fill="#A78BFA"/><circle cx="80" cy="150" r="8" fill="#60A5FA"/><circle cx="120" cy="150" r="8" fill="#34D399"/><circle cx="150" cy="150" r="8" fill="#F472B6"/>
+            <path fill="#F472B6" d="M30,120 C30,100 170,100 170,120 L170,180 L30,180 Z" /><path fill="#FBCFE8" d="M30,140 C30,130 170,130 170,140 L170,160 L30,160 Z" /><path fill="#F9A8D4" d="M20,180 L180,180 L180,190 C180,200 170,200 100,200 C30,200 20,200 20,190 Z" /><path fill="#FDE047" d="M95,80 L105,80 L105,120 L95,120 Z" /><path fill="#F59E0B" d="M98,60 C98,50 102,50 102,60 C105,70 95,70 98,60 Z" /><circle cx="50" cy="150" r="8" fill="#A78BFA"/><circle cx="80" cy="150" r="8" fill="#60A5FA"/><circle cx="120" cy="150" r="8" fill="#34D399"/><circle cx="150" cy="150" r="8" fill="#F472B6"/>
         </svg>
         <button id="startBtn" class="mt-8 bg-pink-500 text-white font-bold py-3 px-6 rounded-full shadow-lg text-lg transform hover:scale-110 transition-transform duration-300">
             Click to open your surprise!
@@ -227,22 +248,24 @@
     <div id="animation-container" class="fixed inset-0 w-full h-full z-0 pointer-events-none"></div>
 
     <div class="container mx-auto px-4 py-8 min-h-screen flex items-center justify-center">
-        <div id="card-wrapper" class="max-w-2xl w-full h-[350px] relative">
+        <div id="card-wrapper" class="max-w-2xl w-full h-[380px] md:h-[350px] relative">
             <div id="card-container" class="card-container w-full h-full">
-                <div class="card-face card-front bg-white/80 backdrop-blur-sm shadow-2xl p-8 md:p-12 text-center flex flex-col justify-center">
-                    <h1 id="heading1" class="text-5xl md:text-7xl text-pink-500 mb-4">Happy 23rd Birthday</h1>
-                    <h2 id="heading2" class="text-4xl md:text-6xl text-purple-500 mb-8">Shenya!</h2>
-                    <p class="content-p text-gray-700 text-lg" style="animation-delay: 1.5s;">
-                        Wishing you a day that's as amazing and special as you are. May your year be filled with joy, laughter, and everything you've ever wished for.
-                    </p>
-                    <p class="content-p text-gray-700 text-lg mt-4" style="animation-delay: 1.7s;">
-                        Cheers to you! 🥳
+                <div class="card-face card-front bg-white/80 backdrop-blur-sm shadow-2xl p-6 md:p-12 text-center flex flex-col justify-center">
+                    <h1 id="heading-line1" class="text-5xl md:text-7xl text-pink-500 mb-2">Happy 23rd</h1>
+                    <h1 id="heading-line2" class="text-5xl md:text-7xl text-pink-500 mb-6">Birthday</h1>
+                    <h2 id="heading-name" class="text-4xl md:text-6xl text-purple-500">Shenya!</h2>
+                    <p class="content-p text-gray-700 text-base md:text-lg mt-6" style="animation-delay: 1.5s;">
+                        Wishing you a day as amazing as you are. May your year be filled with joy, laughter, and everything you've wished for.
                     </p>
                 </div>
                 <div class="card-face card-back bg-white/80 backdrop-blur-sm shadow-2xl p-8 text-center">
-                    <div class="text-3xl" style="font-family: 'Pacifico', cursive;">A special message</div>
-                    <div>for</div>
-                    <div class="text-5xl text-pink-500" style="font-family: 'Pacifico', cursive;">Shenya</div>
+                    <div class="ribbon vertical"></div>
+                    <div class="ribbon horizontal"></div>
+                    <div class="relative z-10 flex flex-col items-center justify-center gap-1">
+                        <div class="text-3xl" style="font-family: 'Pacifico', cursive;">A special message</div>
+                        <div class="text-lg">for</div>
+                        <div class="text-5xl text-pink-500" style="font-family: 'Pacifico', cursive;">Shenya</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -257,72 +280,30 @@
         
         const colors = ['#f472b6', '#c084fc', '#818cf8', '#facc15', '#4ade80'];
 
-        // --- NEW: Function to create rising hearts ---
-        function createRisingHeart() {
-            const heart = document.createElement('div');
-            heart.className = 'heart';
-            heart.style.left = `${Math.random() * 100}vw`;
-            heart.style.animationDuration = `${3 + Math.random() * 4}s`; // 3-7 seconds
-            
-            const color = colors[Math.floor(Math.random() * colors.length)];
-            heart.innerHTML = `
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="${color}" style="filter: drop-shadow(0 0 5px ${color});">
-                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                </svg>
-            `;
-            
-            animationContainer.appendChild(heart);
-
-            setTimeout(() => {
-                heart.remove();
-            }, 7000); // Remove after animation
-        }
+        function createRisingHeart() { /* ... existing code ... */ }
+        function createConfettiBurst() { /* ... existing code ... */ }
+        function createSparkle() { /* ... existing code ... */ }
         
-        // --- UPDATED: createConfettiBurst now makes varied shapes ---
-        function createConfettiBurst() {
-            for (let i = 0; i < 120; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'confetti-burst-particle';
-                
-                const angle = Math.random() * Math.PI * 2;
-                const distance = 50 + Math.random() * 250;
-                const x = Math.cos(angle) * distance;
-                const y = Math.sin(angle) * distance;
+        // --- NEW: Function to create shooting stars ---
+        function createShootingStar() {
+            const star = document.createElement('div');
+            star.className = 'shooting-star';
+            
+            const startX = Math.random() * window.innerWidth;
+            const startY = -50;
+            const endX = startX - 300 - Math.random() * 400;
+            const endY = window.innerHeight + 50;
+            const angle = -25; // degrees
+            
+            star.style.setProperty('--x-start', `${startX}px`);
+            star.style.setProperty('--y-start', `${startY}px`);
+            star.style.setProperty('--x-end', `${endX}px`);
+            star.style.setProperty('--y-end', `${endY}px`);
+            star.style.setProperty('--angle', `${angle}deg`);
+            star.style.animationDuration = `${1.5 + Math.random() * 1.5}s`;
 
-                particle.style.setProperty('--x-end', `${x}px`);
-                particle.style.setProperty('--y-end', `${y}px`);
-                const color = colors[Math.floor(Math.random() * colors.length)];
-                particle.style.setProperty('--color', color);
-                
-                // Randomly assign a shape
-                const shapeType = Math.random();
-                if (shapeType > 0.8) { // Star
-                    particle.style.width = '12px';
-                    particle.style.height = '12px';
-                    particle.style.clipPath = 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)';
-                } else if (shapeType > 0.4) { // Ribbon
-                    particle.style.width = '4px';
-                    particle.style.height = '15px';
-                    particle.style.borderRadius = '2px';
-                } else { // Circle
-                    particle.style.width = '8px';
-                    particle.style.height = '8px';
-                    particle.style.borderRadius = '50%';
-                }
-                
-                animationContainer.appendChild(particle);
-
-                setTimeout(() => particle.remove(), 1200);
-            }
-        }
-        
-        function createSparkle() {
-            const sparkle = document.createElement('div');
-            sparkle.className = 'sparkle';
-            sparkle.style.left = `${Math.random() * 100}%`;
-            sparkle.style.top = `${Math.random() * 100}%`;
-            animationContainer.appendChild(sparkle);
-            setTimeout(() => sparkle.remove(), 800);
+            animationContainer.appendChild(star);
+            setTimeout(() => star.remove(), 3000);
         }
         
         function animateText(elementId) {
@@ -330,6 +311,7 @@
             if (!element) return;
             const text = element.textContent;
             element.innerHTML = '';
+            element.classList.add('text-glow'); // Add glow class
             text.split('').forEach((char, index) => {
                 const span = document.createElement('span');
                 span.textContent = char === ' ' ? '\u00A0' : char;
@@ -339,16 +321,13 @@
             });
         }
         
-        // --- NEW: Mouse move effect for the card ---
         document.addEventListener('mousemove', (e) => {
+            if (!cardWrapper) return;
             const { clientX, clientY } = e;
             const { innerWidth, innerHeight } = window;
-            const xRotation = (clientY / innerHeight - 0.5) * -15; // Max 15deg rotation
+            const xRotation = (clientY / innerHeight - 0.5) * -15;
             const yRotation = (clientX / innerWidth - 0.5) * 15;
-            
-            if (cardWrapper) {
-                 cardWrapper.style.transform = `rotateX(${xRotation}deg) rotateY(${yRotation}deg)`;
-            }
+            cardWrapper.style.transform = `rotateX(${xRotation}deg) rotateY(${yRotation}deg)`;
         });
 
         startBtn.addEventListener('click', () => {
@@ -357,17 +336,57 @@
             setTimeout(() => {
                 cardContainer.classList.add('flipped');
                 createConfettiBurst();
-                animateText('heading1');
-                animateText('heading2');
+                animateText('heading-line1');
+                animateText('heading-line2');
+                animateText('heading-name');
 
                 setTimeout(() => {
                    setInterval(createSparkle, 300);
                    setInterval(createRisingHeart, 500);
+                   setInterval(createShootingStar, 1500); // Start shooting stars
                 }, 1000);
 
             }, 200);
 
         }, { once: true });
+        
+        // --- Functions from previous version (to keep the code complete) ---
+        function createRisingHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.style.left = `${Math.random() * 100}vw`;
+            heart.style.animationDuration = `${3 + Math.random() * 4}s`;
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            heart.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="${color}" style="filter: drop-shadow(0 0 5px ${color});"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
+            animationContainer.appendChild(heart);
+            setTimeout(() => heart.remove(), 7000);
+        }
+        function createConfettiBurst() {
+            for (let i = 0; i < 120; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'confetti-burst-particle';
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 50 + Math.random() * 250;
+                const x = Math.cos(angle) * distance;
+                const y = Math.sin(angle) * distance;
+                particle.style.setProperty('--x-end', `${x}px`);
+                particle.style.setProperty('--y-end', `${y}px`);
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.setProperty('--color', color);
+                const shapeType = Math.random();
+                if (shapeType > 0.8) { particle.style.width = '12px'; particle.style.height = '12px'; particle.style.clipPath = 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)'; } else if (shapeType > 0.4) { particle.style.width = '4px'; particle.style.height = '15px'; particle.style.borderRadius = '2px'; } else { particle.style.width = '8px'; particle.style.height = '8px'; particle.style.borderRadius = '50%'; }
+                animationContainer.appendChild(particle);
+                setTimeout(() => particle.remove(), 1200);
+            }
+        }
+        function createSparkle() {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            sparkle.style.left = `${Math.random() * 100}%`;
+            sparkle.style.top = `${Math.random() * 100}%`;
+            animationContainer.appendChild(sparkle);
+            setTimeout(() => sparkle.remove(), 800);
+        }
     </script>
 </body>
 </html>
