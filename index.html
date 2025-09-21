@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- EDIT: Change the title to your friend's name! -->
+    <title>Happy Birthday, Jessica!</title>
+    
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts for a cute, handwritten feel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Applying the custom fonts */
+        body {
+            font-family: 'Poppins', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        h1, h2, h3 {
+            font-family: 'Pacifico', cursive;
+        }
+
+        /* Confetti animation styles */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: fall 5s linear forwards;
+            pointer-events: none;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* A subtle animation for the main card */
+        .card-enter {
+            animation: card-fade-in 1.5s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes card-fade-in {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-pink-200 via-purple-200 to-indigo-300">
+
+    <!-- Confetti will be added here by JavaScript -->
+    <div id="confetti-container" class="fixed inset-0 w-full h-full z-0 pointer-events-none"></div>
+
+    <div class="container mx-auto px-4 py-8 min-h-screen flex items-center justify-center">
+        <!-- Main Content Card -->
+        <div class="bg-white/80 backdrop-blur-sm shadow-2xl rounded-2xl p-6 md:p-10 text-center max-w-2xl w-full card-enter">
+            
+            <!-- EDIT: Change [Bestie's Name] to your friend's name -->
+            <h1 class="text-4xl md:text-6xl text-pink-500 mb-4">Happy Birthday, Jessica! 🎉</h1>
+            
+            <!-- EDIT: Write your personal message here -->
+            <p class="text-gray-700 text-lg mb-8">
+                To my dearest friend, my partner-in-crime, and the one who knows me best! I can't believe it's another year. I wanted to make something a little special for you. Here's to more laughter, more adventures, and more unforgettable memories.
+            </p>
+
+            <!-- A little gallery of memories or reasons -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <!-- Memory 1 -->
+                <div class="bg-white/70 p-6 rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300">
+                    <h2 class="text-2xl text-purple-600 mb-2">That One Time...</h2>
+                    <!-- EDIT: Describe a favorite memory -->
+                    <p class="text-gray-600">...we tried to bake that ridiculously complex cake and ended up covering the kitchen in flour. It was a delicious disaster and I wouldn't trade it for anything!</p>
+                </div>
+                
+                <!-- Reason 2 -->
+                <div class="bg-white/70 p-6 rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300">
+                    <h2 class="text-2xl text-purple-600 mb-2">Why You're Awesome</h2>
+                    <!-- EDIT: Write something you love about your friend -->
+                    <p class="text-gray-600">Your incredible kindness and the way you can make anyone laugh, even on their worst day. You're a true gem and you inspire me constantly.</p>
+                </div>
+            </div>
+
+            <!-- A button to trigger a surprise -->
+            <button id="surpriseBtn" class="bg-pink-500 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-pink-600 transform hover:scale-110 transition-all duration-300">
+                ✨ Click for a surprise! ✨
+            </button>
+            
+        </div>
+    </div>
+
+    <script>
+        const surpriseBtn = document.getElementById('surpriseBtn');
+        const confettiContainer = document.getElementById('confetti-container');
+
+        const confettiColors = ['#f472b6', '#c084fc', '#818cf8', '#60a5fa', '#facc15'];
+
+        function createConfetti() {
+            // Create a bunch of confetti pieces
+            for (let i = 0; i < 150; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                
+                // Randomize properties
+                confetti.style.left = `${Math.random() * 100}vw`;
+                confetti.style.backgroundColor = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+                confetti.style.animationDelay = `${Math.random() * 2}s`;
+                confetti.style.animationDuration = `${3 + Math.random() * 2}s`; // Fall between 3 and 5 seconds
+                
+                confettiContainer.appendChild(confetti);
+
+                // Remove confetti from DOM after animation finishes
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+        }
+
+        surpriseBtn.addEventListener('click', createConfetti);
+
+        // A little welcome confetti shower on page load!
+        window.onload = () => {
+            setTimeout(createConfetti, 500);
+        };
+    </script>
+</body>
+</html>
