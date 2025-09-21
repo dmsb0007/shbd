@@ -13,14 +13,15 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     
-    <!-- Tone.js for generating the birthday song -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.min.js"></script>
-
     <style>
         /* Applying custom fonts */
         body {
             font-family: 'Poppins', sans-serif;
             overflow: hidden; /* Hide scrollbars */
+            perspective: 1500px; /* Increased perspective for 3D effect */
+            background: linear-gradient(45deg, #fbcfe8, #d8b4fe, #a5b4fc, #93c5fd);
+            background-size: 400% 400%;
+            animation: animateGradient 15s ease infinite;
         }
         h1, h2 {
             font-family: 'Pacifico', cursive;
@@ -35,7 +36,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: #fce7f3; /* A soft pink background */
+            background: #fce7f3;
             transition: opacity 1s ease-out, transform 1s ease-out;
         }
 
@@ -45,176 +46,328 @@
             pointer-events: none;
         }
         
-        /* The cake SVG itself */
         .cake {
             width: 150px;
             height: 150px;
             filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.1));
+            animation: float 3s infinite ease-in-out;
+        }
+        
+        #startBtn {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #startBtn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transform: rotate(30deg);
+            animation: shine 4s infinite linear;
         }
 
         /* --- Animation Keyframes --- */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(30px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+        @keyframes animateGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
         }
         
-        @keyframes confetti-fall {
-            0% { transform: translateY(-100%) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(100vh) rotate(1080deg); opacity: 0; }
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-25%) rotate(30deg); }
+            100% { transform: translateX(100%) translateY(25%) rotate(30deg); }
+        }
+        
+        /* --- NEW: Rising Hearts Animation --- */
+        @keyframes rise-and-fade {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) scale(0.5);
+                opacity: 0;
+            }
+        }
+        
+        .heart {
+            position: fixed;
+            bottom: -50px; /* Start off-screen */
+            pointer-events: none;
+            z-index: 5;
+            animation: rise-and-fade linear forwards;
         }
 
-        /* Add the animation to the main content */
-        .main-content {
-            opacity: 0;
-            animation: fadeIn 1.5s ease-out 0.5s forwards;
+        @keyframes confetti-burst {
+            0% {
+                transform: translate(0, 0) rotate(0deg) scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--x-end), var(--y-end)) rotate(720deg) scale(1);
+                opacity: 0;
+            }
         }
+
+        /* --- Main Content & Card Flip Animation --- */
+        /* NEW: Mouse-move interaction styles */
+        #card-wrapper {
+            transition: transform 0.1s ease-out;
+        }
+
+        .card-container {
+            transform-style: preserve-3d;
+            transition: transform 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            transform: rotateY(0deg);
+        }
+
+        .card-container.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 1rem;
+        }
+        
+        .card-front {
+            transform: rotateY(180deg);
+        }
+        
+        .card-back {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 1rem;
+            font-size: 1.5rem;
+            color: #be185d;
+        }
+
 
         /* Confetti piece styling */
-        .confetti {
+        .confetti-burst-particle {
             position: fixed;
-            top: 0;
+            left: 50%;
+            top: 50%;
+            pointer-events: none;
+            background-color: var(--color);
+            animation: confetti-burst 1.2s ease-out forwards;
+        }
+        
+        .letter {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(-50px);
+            animation: bounce-in 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+        }
+        
+        @keyframes bounce-in {
+            0% { opacity: 0; transform: translateY(-50px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        .content-p {
+            opacity: 0;
+            animation: fadeInP 1s ease-out forwards;
+        }
+
+        @keyframes fadeInP {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .sparkle {
+            position: fixed; /* Changed to fixed to appear everywhere */
             width: 12px;
             height: 12px;
-            border-radius: 50%;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0 L61.2 38.8 L100 50 L61.2 61.2 L50 100 L38.8 61.2 L0 50 L38.8 38.8 Z' fill='%23FBBF24'/%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+            z-index: 10;
             pointer-events: none;
-            animation-name: confetti-fall;
-            animation-timing-function: linear;
-            animation-iteration-count: infinite;
+            animation: sparkle-anim 0.8s ease-out forwards;
+        }
+
+        @keyframes sparkle-anim {
+            0% { transform: scale(0) rotate(0deg); opacity: 1; }
+            50% { transform: scale(1.5) rotate(180deg); opacity: 1; }
+            100% { transform: scale(0) rotate(360deg); opacity: 0; }
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-pink-200 via-purple-200 to-indigo-200">
+<body>
 
-    <!-- Loading Screen with Cake -->
     <div id="loader">
-        <!-- Cute Cake SVG -->
-        <!--  -->
         <svg class="cake" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
             <path fill="#F472B6" d="M30,120 C30,100 170,100 170,120 L170,180 L30,180 Z" />
             <path fill="#FBCFE8" d="M30,140 C30,130 170,130 170,140 L170,160 L30,160 Z" />
             <path fill="#F9A8D4" d="M20,180 L180,180 L180,190 C180,200 170,200 100,200 C30,200 20,200 20,190 Z" />
             <path fill="#FDE047" d="M95,80 L105,80 L105,120 L95,120 Z" />
             <path fill="#F59E0B" d="M98,60 C98,50 102,50 102,60 C105,70 95,70 98,60 Z" />
-            <circle cx="50" cy="150" r="8" fill="#A78BFA"/>
-            <circle cx="80" cy="150" r="8" fill="#60A5FA"/>
-            <circle cx="120" cy="150" r="8" fill="#34D399"/>
-            <circle cx="150" cy="150" r="8" fill="#F472B6"/>
+            <circle cx="50" cy="150" r="8" fill="#A78BFA"/><circle cx="80" cy="150" r="8" fill="#60A5FA"/><circle cx="120" cy="150" r="8" fill="#34D399"/><circle cx="150" cy="150" r="8" fill="#F472B6"/>
         </svg>
         <button id="startBtn" class="mt-8 bg-pink-500 text-white font-bold py-3 px-6 rounded-full shadow-lg text-lg transform hover:scale-110 transition-transform duration-300">
             Click to open your surprise!
         </button>
     </div>
 
-    <!-- Confetti Container -->
-    <div id="confetti-container" class="fixed inset-0 w-full h-full z-0 pointer-events-none"></div>
+    <div id="animation-container" class="fixed inset-0 w-full h-full z-0 pointer-events-none"></div>
 
-    <!-- Main Content (hidden initially) -->
     <div class="container mx-auto px-4 py-8 min-h-screen flex items-center justify-center">
-        <div class="main-content bg-white/80 backdrop-blur-sm shadow-2xl rounded-2xl p-8 md:p-12 text-center max-w-2xl w-full">
-            
-            <h1 class="text-5xl md:text-7xl text-pink-500 mb-4">Happy 23rd Birthday</h1>
-            <h2 class="text-4xl md:text-6xl text-purple-500 mb-8">Shenya!</h2>
-            
-            <p class="text-gray-700 text-lg">
-                Wishing you a day that's as amazing and special as you are. May your year be filled with joy, laughter, and everything you've ever wished for.
-            </p>
-            <p class="text-gray-700 text-lg mt-4">
-                Cheers to you! 🥳
-            </p>
-            
+        <div id="card-wrapper" class="max-w-2xl w-full h-[350px] relative">
+            <div id="card-container" class="card-container w-full h-full">
+                <div class="card-face card-front bg-white/80 backdrop-blur-sm shadow-2xl p-8 md:p-12 text-center flex flex-col justify-center">
+                    <h1 id="heading1" class="text-5xl md:text-7xl text-pink-500 mb-4">Happy 23rd Birthday</h1>
+                    <h2 id="heading2" class="text-4xl md:text-6xl text-purple-500 mb-8">Shenya!</h2>
+                    <p class="content-p text-gray-700 text-lg" style="animation-delay: 1.5s;">
+                        Wishing you a day that's as amazing and special as you are. May your year be filled with joy, laughter, and everything you've ever wished for.
+                    </p>
+                    <p class="content-p text-gray-700 text-lg mt-4" style="animation-delay: 1.7s;">
+                        Cheers to you! 🥳
+                    </p>
+                </div>
+                <div class="card-face card-back bg-white/80 backdrop-blur-sm shadow-2xl p-8 text-center">
+                    <div class="text-3xl" style="font-family: 'Pacifico', cursive;">A special message</div>
+                    <div>for</div>
+                    <div class="text-5xl text-pink-500" style="font-family: 'Pacifico', cursive;">Shenya</div>
+                </div>
+            </div>
         </div>
     </div>
-    
-    <!-- Audio element (hidden) -->
-    <audio id="birthdaySong" loop>
-        <!-- The song will be generated by Tone.js, this is just a placeholder -->
-    </audio>
 
     <script>
         const loader = document.getElementById('loader');
         const startBtn = document.getElementById('startBtn');
-        const confettiContainer = document.getElementById('confetti-container');
+        const animationContainer = document.getElementById('animation-container');
+        const cardContainer = document.getElementById('card-container');
+        const cardWrapper = document.getElementById('card-wrapper');
         
-        // --- Confetti Generation ---
-        const confettiColors = ['#f472b6', '#c084fc', '#818cf8', '#facc15', '#4ade80'];
-        function createConfetti() {
-            for (let i = 0; i < 100; i++) {
-                const confetti = document.createElement('div');
-                confetti.classList.add('confetti');
-                confetti.style.left = `${Math.random() * 100}vw`;
-                confetti.style.backgroundColor = confettiColors[Math.floor(Math.random() * confettiColors.length)];
-                confetti.style.animationDuration = `${5 + Math.random() * 5}s`; // 5 to 10 seconds
-                confetti.style.animationDelay = `${Math.random() * 2}s`;
-                confettiContainer.appendChild(confetti);
+        const colors = ['#f472b6', '#c084fc', '#818cf8', '#facc15', '#4ade80'];
+
+        // --- NEW: Function to create rising hearts ---
+        function createRisingHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.style.left = `${Math.random() * 100}vw`;
+            heart.style.animationDuration = `${3 + Math.random() * 4}s`; // 3-7 seconds
+            
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            heart.innerHTML = `
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="${color}" style="filter: drop-shadow(0 0 5px ${color});">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+            `;
+            
+            animationContainer.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 7000); // Remove after animation
+        }
+        
+        // --- UPDATED: createConfettiBurst now makes varied shapes ---
+        function createConfettiBurst() {
+            for (let i = 0; i < 120; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'confetti-burst-particle';
+                
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 50 + Math.random() * 250;
+                const x = Math.cos(angle) * distance;
+                const y = Math.sin(angle) * distance;
+
+                particle.style.setProperty('--x-end', `${x}px`);
+                particle.style.setProperty('--y-end', `${y}px`);
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.setProperty('--color', color);
+                
+                // Randomly assign a shape
+                const shapeType = Math.random();
+                if (shapeType > 0.8) { // Star
+                    particle.style.width = '12px';
+                    particle.style.height = '12px';
+                    particle.style.clipPath = 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)';
+                } else if (shapeType > 0.4) { // Ribbon
+                    particle.style.width = '4px';
+                    particle.style.height = '15px';
+                    particle.style.borderRadius = '2px';
+                } else { // Circle
+                    particle.style.width = '8px';
+                    particle.style.height = '8px';
+                    particle.style.borderRadius = '50%';
+                }
+                
+                animationContainer.appendChild(particle);
+
+                setTimeout(() => particle.remove(), 1200);
             }
         }
         
-        // --- Birthday Song with Tone.js ---
-        function playBirthdaySong() {
-            // Ensure audio context is started
-            Tone.start();
-
-            const synth = new Tone.Synth().toDestination();
-            const now = Tone.now();
-
-            // Notes for "Happy Birthday"
-            const melody = [
-                { note: 'C4', duration: '8n', time: now },
-                { note: 'C4', duration: '8n', time: now + 0.25 },
-                { note: 'D4', duration: '4n', time: now + 0.5 },
-                { note: 'C4', duration: '4n', time: now + 1 },
-                { note: 'F4', duration: '4n', time: now + 1.5 },
-                { note: 'E4', duration: '2n', time: now + 2 },
-
-                { note: 'C4', duration: '8n', time: now + 3 },
-                { note: 'C4', duration: '8n', time: now + 3.25 },
-                { note: 'D4', duration: '4n', time: now + 3.5 },
-                { note: 'C4', duration: '4n', time: now + 4 },
-                { note: 'G4', duration: '4n', time: now + 4.5 },
-                { note: 'F4', duration: '2n', time: now + 5 },
-
-                { note: 'C4', duration: '8n', time: now + 6 },
-                { note: 'C4', duration: '8n', time: now + 6.25 },
-                { note: 'C5', duration: '4n', time: now + 6.5 },
-                { note: 'A4', duration: '4n', time: now + 7 },
-                { note: 'F4', duration: '4n', time: now + 7.5 },
-                { note: 'E4', duration: '4n', time: now + 8 },
-                { note: 'D4', duration: '2n', time: now + 8.5 },
-
-                { note: 'A#4', duration: '8n', time: now + 9.5 },
-                { note: 'A#4', duration: '8n', time: now + 9.75 },
-                { note: 'A4', duration: '4n', time: now + 10 },
-                { note: 'F4', duration: '4n', time: now + 10.5 },
-                { note: 'G4', duration: '4n', time: now + 11 },
-                { note: 'F4', duration: '2n', time: now + 11.5 }
-            ];
-
-            melody.forEach(note => {
-                synth.triggerAttackRelease(note.note, note.duration, note.time);
-            });
-            
-            // Loop the song
-            Tone.Transport.scheduleRepeat(() => {
-                 melody.forEach(note => {
-                    synth.triggerAttackRelease(note.note, note.duration, Tone.now() + (note.time - now));
-                });
-            }, '13s', now);
-
-            Tone.Transport.start();
+        function createSparkle() {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            sparkle.style.left = `${Math.random() * 100}%`;
+            sparkle.style.top = `${Math.random() * 100}%`;
+            animationContainer.appendChild(sparkle);
+            setTimeout(() => sparkle.remove(), 800);
         }
-
-        // --- Event Listener ---
-        startBtn.addEventListener('click', () => {
-            // 1. "Blast" the cake away
-            loader.classList.add('hidden');
+        
+        function animateText(elementId) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            const text = element.textContent;
+            element.innerHTML = '';
+            text.split('').forEach((char, index) => {
+                const span = document.createElement('span');
+                span.textContent = char === ' ' ? '\u00A0' : char;
+                span.className = 'letter';
+                span.style.animationDelay = `${index * 0.05 + 0.8}s`;
+                element.appendChild(span);
+            });
+        }
+        
+        // --- NEW: Mouse move effect for the card ---
+        document.addEventListener('mousemove', (e) => {
+            const { clientX, clientY } = e;
+            const { innerWidth, innerHeight } = window;
+            const xRotation = (clientY / innerHeight - 0.5) * -15; // Max 15deg rotation
+            const yRotation = (clientX / innerWidth - 0.5) * 15;
             
-            // 2. Play the song
-            playBirthdaySong();
-
-            // 3. Start the confetti
-            createConfetti();
+            if (cardWrapper) {
+                 cardWrapper.style.transform = `rotateX(${xRotation}deg) rotateY(${yRotation}deg)`;
+            }
         });
 
+        startBtn.addEventListener('click', () => {
+            loader.classList.add('hidden');
+            
+            setTimeout(() => {
+                cardContainer.classList.add('flipped');
+                createConfettiBurst();
+                animateText('heading1');
+                animateText('heading2');
+
+                setTimeout(() => {
+                   setInterval(createSparkle, 300);
+                   setInterval(createRisingHeart, 500);
+                }, 1000);
+
+            }, 200);
+
+        }, { once: true });
     </script>
 </body>
 </html>
