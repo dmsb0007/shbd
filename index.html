@@ -3,134 +3,219 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- EDIT: Change the title to your friend's name! -->
-    <title>Happy Birthday, Jessica!</title>
+    <title>Happy Birthday, Shenya!</title>
     
     <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Google Fonts for a cute, handwritten feel -->
+    <!-- Google Fonts for a cute, celebratory feel -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     
+    <!-- Tone.js for generating the birthday song -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.min.js"></script>
+
     <style>
-        /* Applying the custom fonts */
+        /* Applying custom fonts */
         body {
             font-family: 'Poppins', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            overflow: hidden; /* Hide scrollbars */
         }
-        
-        h1, h2, h3 {
+        h1, h2 {
             font-family: 'Pacifico', cursive;
         }
 
-        /* Confetti animation styles */
-        .confetti {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            animation: fall 5s linear forwards;
+        /* --- Loading Screen Styles --- */
+        #loader {
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #fce7f3; /* A soft pink background */
+            transition: opacity 1s ease-out, transform 1s ease-out;
+        }
+
+        #loader.hidden {
+            opacity: 0;
+            transform: scale(1.5);
             pointer-events: none;
         }
-
-        @keyframes fall {
-            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+        
+        /* The cake SVG itself */
+        .cake {
+            width: 150px;
+            height: 150px;
+            filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.1));
         }
 
-        /* A subtle animation for the main card */
-        .card-enter {
-            animation: card-fade-in 1.5s ease-out forwards;
+        /* --- Animation Keyframes --- */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100%) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(1080deg); opacity: 0; }
+        }
+
+        /* Add the animation to the main content */
+        .main-content {
             opacity: 0;
-            transform: translateY(20px);
+            animation: fadeIn 1.5s ease-out 0.5s forwards;
         }
 
-        @keyframes card-fade-in {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        /* Confetti piece styling */
+        .confetti {
+            position: fixed;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            pointer-events: none;
+            animation-name: confetti-fall;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-pink-200 via-purple-200 to-indigo-300">
+<body class="bg-gradient-to-br from-pink-200 via-purple-200 to-indigo-200">
 
-    <!-- Confetti will be added here by JavaScript -->
+    <!-- Loading Screen with Cake -->
+    <div id="loader">
+        <!-- Cute Cake SVG -->
+        <!--  -->
+        <svg class="cake" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#F472B6" d="M30,120 C30,100 170,100 170,120 L170,180 L30,180 Z" />
+            <path fill="#FBCFE8" d="M30,140 C30,130 170,130 170,140 L170,160 L30,160 Z" />
+            <path fill="#F9A8D4" d="M20,180 L180,180 L180,190 C180,200 170,200 100,200 C30,200 20,200 20,190 Z" />
+            <path fill="#FDE047" d="M95,80 L105,80 L105,120 L95,120 Z" />
+            <path fill="#F59E0B" d="M98,60 C98,50 102,50 102,60 C105,70 95,70 98,60 Z" />
+            <circle cx="50" cy="150" r="8" fill="#A78BFA"/>
+            <circle cx="80" cy="150" r="8" fill="#60A5FA"/>
+            <circle cx="120" cy="150" r="8" fill="#34D399"/>
+            <circle cx="150" cy="150" r="8" fill="#F472B6"/>
+        </svg>
+        <button id="startBtn" class="mt-8 bg-pink-500 text-white font-bold py-3 px-6 rounded-full shadow-lg text-lg transform hover:scale-110 transition-transform duration-300">
+            Click to open your surprise!
+        </button>
+    </div>
+
+    <!-- Confetti Container -->
     <div id="confetti-container" class="fixed inset-0 w-full h-full z-0 pointer-events-none"></div>
 
+    <!-- Main Content (hidden initially) -->
     <div class="container mx-auto px-4 py-8 min-h-screen flex items-center justify-center">
-        <!-- Main Content Card -->
-        <div class="bg-white/80 backdrop-blur-sm shadow-2xl rounded-2xl p-6 md:p-10 text-center max-w-2xl w-full card-enter">
+        <div class="main-content bg-white/80 backdrop-blur-sm shadow-2xl rounded-2xl p-8 md:p-12 text-center max-w-2xl w-full">
             
-            <!-- EDIT: Change [Bestie's Name] to your friend's name -->
-            <h1 class="text-4xl md:text-6xl text-pink-500 mb-4">Happy Birthday, Jessica! 🎉</h1>
+            <h1 class="text-5xl md:text-7xl text-pink-500 mb-4">Happy 23rd Birthday</h1>
+            <h2 class="text-4xl md:text-6xl text-purple-500 mb-8">Shenya!</h2>
             
-            <!-- EDIT: Write your personal message here -->
-            <p class="text-gray-700 text-lg mb-8">
-                To my dearest friend, my partner-in-crime, and the one who knows me best! I can't believe it's another year. I wanted to make something a little special for you. Here's to more laughter, more adventures, and more unforgettable memories.
+            <p class="text-gray-700 text-lg">
+                Wishing you a day that's as amazing and special as you are. May your year be filled with joy, laughter, and everything you've ever wished for.
             </p>
-
-            <!-- A little gallery of memories or reasons -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <!-- Memory 1 -->
-                <div class="bg-white/70 p-6 rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300">
-                    <h2 class="text-2xl text-purple-600 mb-2">That One Time...</h2>
-                    <!-- EDIT: Describe a favorite memory -->
-                    <p class="text-gray-600">...we tried to bake that ridiculously complex cake and ended up covering the kitchen in flour. It was a delicious disaster and I wouldn't trade it for anything!</p>
-                </div>
-                
-                <!-- Reason 2 -->
-                <div class="bg-white/70 p-6 rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300">
-                    <h2 class="text-2xl text-purple-600 mb-2">Why You're Awesome</h2>
-                    <!-- EDIT: Write something you love about your friend -->
-                    <p class="text-gray-600">Your incredible kindness and the way you can make anyone laugh, even on their worst day. You're a true gem and you inspire me constantly.</p>
-                </div>
-            </div>
-
-            <!-- A button to trigger a surprise -->
-            <button id="surpriseBtn" class="bg-pink-500 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-pink-600 transform hover:scale-110 transition-all duration-300">
-                ✨ Click for a surprise! ✨
-            </button>
+            <p class="text-gray-700 text-lg mt-4">
+                Cheers to you! 🥳
+            </p>
             
         </div>
     </div>
+    
+    <!-- Audio element (hidden) -->
+    <audio id="birthdaySong" loop>
+        <!-- The song will be generated by Tone.js, this is just a placeholder -->
+    </audio>
 
     <script>
-        const surpriseBtn = document.getElementById('surpriseBtn');
+        const loader = document.getElementById('loader');
+        const startBtn = document.getElementById('startBtn');
         const confettiContainer = document.getElementById('confetti-container');
-
-        const confettiColors = ['#f472b6', '#c084fc', '#818cf8', '#60a5fa', '#facc15'];
-
+        
+        // --- Confetti Generation ---
+        const confettiColors = ['#f472b6', '#c084fc', '#818cf8', '#facc15', '#4ade80'];
         function createConfetti() {
-            // Create a bunch of confetti pieces
-            for (let i = 0; i < 150; i++) {
+            for (let i = 0; i < 100; i++) {
                 const confetti = document.createElement('div');
                 confetti.classList.add('confetti');
-                
-                // Randomize properties
                 confetti.style.left = `${Math.random() * 100}vw`;
                 confetti.style.backgroundColor = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+                confetti.style.animationDuration = `${5 + Math.random() * 5}s`; // 5 to 10 seconds
                 confetti.style.animationDelay = `${Math.random() * 2}s`;
-                confetti.style.animationDuration = `${3 + Math.random() * 2}s`; // Fall between 3 and 5 seconds
-                
                 confettiContainer.appendChild(confetti);
-
-                // Remove confetti from DOM after animation finishes
-                setTimeout(() => {
-                    confetti.remove();
-                }, 5000);
             }
         }
+        
+        // --- Birthday Song with Tone.js ---
+        function playBirthdaySong() {
+            // Ensure audio context is started
+            Tone.start();
 
-        surpriseBtn.addEventListener('click', createConfetti);
+            const synth = new Tone.Synth().toDestination();
+            const now = Tone.now();
 
-        // A little welcome confetti shower on page load!
-        window.onload = () => {
-            setTimeout(createConfetti, 500);
-        };
+            // Notes for "Happy Birthday"
+            const melody = [
+                { note: 'C4', duration: '8n', time: now },
+                { note: 'C4', duration: '8n', time: now + 0.25 },
+                { note: 'D4', duration: '4n', time: now + 0.5 },
+                { note: 'C4', duration: '4n', time: now + 1 },
+                { note: 'F4', duration: '4n', time: now + 1.5 },
+                { note: 'E4', duration: '2n', time: now + 2 },
+
+                { note: 'C4', duration: '8n', time: now + 3 },
+                { note: 'C4', duration: '8n', time: now + 3.25 },
+                { note: 'D4', duration: '4n', time: now + 3.5 },
+                { note: 'C4', duration: '4n', time: now + 4 },
+                { note: 'G4', duration: '4n', time: now + 4.5 },
+                { note: 'F4', duration: '2n', time: now + 5 },
+
+                { note: 'C4', duration: '8n', time: now + 6 },
+                { note: 'C4', duration: '8n', time: now + 6.25 },
+                { note: 'C5', duration: '4n', time: now + 6.5 },
+                { note: 'A4', duration: '4n', time: now + 7 },
+                { note: 'F4', duration: '4n', time: now + 7.5 },
+                { note: 'E4', duration: '4n', time: now + 8 },
+                { note: 'D4', duration: '2n', time: now + 8.5 },
+
+                { note: 'A#4', duration: '8n', time: now + 9.5 },
+                { note: 'A#4', duration: '8n', time: now + 9.75 },
+                { note: 'A4', duration: '4n', time: now + 10 },
+                { note: 'F4', duration: '4n', time: now + 10.5 },
+                { note: 'G4', duration: '4n', time: now + 11 },
+                { note: 'F4', duration: '2n', time: now + 11.5 }
+            ];
+
+            melody.forEach(note => {
+                synth.triggerAttackRelease(note.note, note.duration, note.time);
+            });
+            
+            // Loop the song
+            Tone.Transport.scheduleRepeat(() => {
+                 melody.forEach(note => {
+                    synth.triggerAttackRelease(note.note, note.duration, Tone.now() + (note.time - now));
+                });
+            }, '13s', now);
+
+            Tone.Transport.start();
+        }
+
+        // --- Event Listener ---
+        startBtn.addEventListener('click', () => {
+            // 1. "Blast" the cake away
+            loader.classList.add('hidden');
+            
+            // 2. Play the song
+            playBirthdaySong();
+
+            // 3. Start the confetti
+            createConfetti();
+        });
+
     </script>
 </body>
 </html>
+
